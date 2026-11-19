@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backoffice-Planer – Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6f8;--panel:#fff;--ink:#16191f;--muted:#6b7280;--line:#e4e7ec;--soft:#f0f2f5;--accent:#1d4ed8;--accent-soft:#e8efff;--ok:#15803d;--ok-soft:#e7f6ec;--warn:#b45309;--warn-soft:#fdf3e3;--bad:#b91c1c;--bad-soft:#fdecec;--r:10px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}a{color:var(--accent);text-decoration:none}
+.app{display:grid;grid-template-columns:224px 1fr;min-height:100vh}
+aside{background:#11151c;color:#cfd5df;padding:20px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{color:#fff;font-weight:700;font-size:16px;padding:4px 10px}.brand small{display:block;font-weight:500;font-size:11px;color:#8b95a5;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+nav{margin-top:18px;display:flex;flex-direction:column;gap:2px}
+nav a{color:#cfd5df;padding:9px 10px;border-radius:8px;display:flex;gap:10px;font-weight:500}nav a:hover{background:#1c222c}nav a.active{background:#243049;color:#fff}nav a .ico{width:18px;text-align:center;opacity:.85}
+.side-foot{margin-top:auto;font-size:12px;color:#8b95a5;padding:10px;border-top:1px solid #222936}.side-foot b{color:#cfd5df}
+main{min-width:0}
+.top{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+.top h1{font-size:18px;margin:0;font-weight:650}.top .demo{margin-left:auto;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.pill-demo{background:var(--warn-soft);color:var(--warn);font-weight:600;padding:3px 8px;border-radius:99px;font-size:11px}
+.content{padding:24px 28px 60px;max-width:1300px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--soft)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--bad)}.btn.sm{padding:4px 9px;font-size:13px}.btn.ghost{border-color:transparent;background:transparent}
+.grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:1.35fr 1fr}.cols2{grid-template-columns:1fr 1fr}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.card h3{margin:0 0 12px;font-size:14px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.card h3 .sp{margin-left:auto;font-weight:500}
+.kpi .n{font-size:28px;font-weight:700;letter-spacing:-.02em}.kpi .l{color:var(--muted);font-size:13px}.kpi .s{font-size:12px;margin-top:4px;color:var(--muted)}
+.muted{color:var(--muted)}.small{font-size:12px}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.st-Anfrage{background:#eef1f6;color:#475467}.st-Option{background:var(--warn-soft);color:var(--warn)}.st-Bestätigt{background:var(--ok-soft);color:var(--ok)}.st-Abgeschlossen{background:#f1f1f1;color:#888}
+.ev-row{display:flex;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}.ev-row:first-of-type{border-top:0}.ev-row:hover .t{color:var(--accent)}
+.datebox{width:52px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:4px 0;flex:none}.datebox .d{font-size:18px;font-weight:700;line-height:1.1}.datebox .w{font-size:11px;color:var(--muted);text-transform:uppercase}
+.ev-row .t{font-weight:600}.ev-row .meta{color:var(--muted);font-size:12px}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.ini{display:inline-flex;align-items:center;gap:4px;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:1px 8px;font-size:11.5px;font-weight:600}
+.ini.ok{background:var(--ok-soft);color:var(--ok)}.ini.miss{background:var(--bad-soft);color:var(--bad)}
+.glass{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:99px;padding:1px 8px;font-size:11.5px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.d-Weisswein{background:#e5c95b}.d-Rotwein{background:#8b1e3f}.d-Prosecco{background:#f2e3a6;border:1px solid #d6c37a}.d-Mineralwasser{background:#7dd3fc}.d-Bier{background:#d97706}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}tbody tr.click{cursor:pointer}tbody tr.click:hover{background:#fafbfc}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}.toolbar input[type=search]{border:1px solid var(--line);border-radius:8px;padding:7px 12px;min-width:240px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:5px 11px;cursor:pointer;font-size:13px}.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.spacer{flex:1}.field{display:flex;flex-direction:column;gap:4px}.field label{font-size:12px;color:var(--muted);font-weight:500}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=time],select,textarea{border:1px solid var(--line);border-radius:7px;padding:6px 9px;background:#fff;width:100%}
+textarea{resize:vertical;min-height:70px}input:focus,select:focus,textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:13.5px}.kv dt{color:var(--muted)}.kv dd{margin:0}
+.head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}.head h2{margin:2px 0 4px;font-size:22px}.head .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.alert{border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px}.alert.warn{background:var(--warn-soft);color:#7a3e06;border:1px solid #f3d9ae}.alert.bad{background:var(--bad-soft);color:#7f1d1d;border:1px solid #f5c2c2}.alert.info{background:var(--accent-soft);color:#1e3a8a;border:1px solid #c9d8fb}
+.step{display:flex;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);align-items:center}.step b{width:46px;flex:none;font-variant-numeric:tabular-nums}
+.step .x{margin-left:auto;opacity:0;cursor:pointer;border:0;background:none;color:var(--muted)}.step:hover .x{opacity:1}
+.tag{font-size:11px;font-weight:600;padding:1px 7px;border-radius:5px;flex:none;width:96px;text-align:center}
+.t-start{background:#e0e7ff;color:#3730a3}.t-wc{background:#e0f2fe;color:#075985}.t-pause{background:#dcfce7;color:#166534}.t-clean{background:#f3e8ff;color:#6b21a8}.t-end{background:#f1f5f9;color:#334155}.t-info{background:#fef3c7;color:#92400e}
+.addrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.addrow input[type=text]{flex:1;min-width:140px}
+.ev-grid{grid-template-columns:repeat(2,1fr)}.ev-grid .wide{grid-column:1/-1}
+.conf{color:var(--ok);font-weight:600;font-size:12px}.pend{color:var(--muted);font-size:12px}.clash{color:var(--bad);font-size:12px;font-weight:600}
+.drink-toggle{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.drink-toggle label{border:1px solid var(--line);border-radius:99px;padding:5px 12px;display:flex;gap:7px;align-items:center;cursor:pointer;font-size:13px}
+.drink-toggle label.on{border-color:var(--ink);background:#fafafa;font-weight:600}.drink-toggle input{display:none}
+.crate-total{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.crate-total div{background:var(--soft);border-radius:8px;padding:8px 12px}.crate-total b{font-size:18px;display:block}
+/* Kalender */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);background:#fff;border-radius:var(--r);overflow:hidden}
+.cal .h{padding:8px;font-size:12px;font-weight:600;color:var(--muted);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fafbfc;text-align:center}
+.cal .c{min-height:112px;padding:6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:12px}
+.cal .c.out{background:#fafbfc;color:#b6bcc6}.cal .c.today .num{background:var(--accent);color:#fff;border-radius:99px;padding:0 7px}
+.cal .num{font-weight:600;display:inline-block;margin-bottom:4px}
+.cal .e{display:block;border-left:3px solid var(--accent);background:#f7f9ff;border-radius:5px;padding:4px 6px;margin-bottom:4px;cursor:pointer;text-align:left;width:100%;border-top:0;border-right:0;border-bottom:0}
+.cal .e:hover{background:#eef3ff}.cal .e.Option{border-left-color:#d97706;background:#fffaf0}.cal .e.Anfrage{border-left-color:#94a3b8;background:#f8fafc}.cal .e.Abgeschlossen{border-left-color:#cbd5e1;background:#f8fafc;color:#94a3b8}
+.cal .e .tt{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+/* Team */
+.staff-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.person{display:flex;gap:12px;align-items:center;margin-bottom:12px}.stats{display:flex;gap:18px;margin:6px 0 12px}.stats b{display:block;font-size:18px}.stats span{font-size:12px;color:var(--muted)}
+.log{padding:0;margin:0}.log li{padding:7px 0;border-bottom:1px solid var(--line);font-size:13px;list-style:none;display:flex;gap:10px}.log time{color:var(--muted);font-size:12px;flex:none;width:86px}
+.todo li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;font-size:13px}.todo{padding:0;margin:0}
+.todo .ic{flex:none;width:20px;text-align:center}
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(15,18,25,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
+.modal{background:var(--panel);border-radius:12px;width:min(660px,100%);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal header{padding:16px 20px;border-bottom:1px solid var(--line);font-weight:650;font-size:16px;display:flex;align-items:center}.modal header button{margin-left:auto}
+.modal .body{padding:18px 20px;display:grid;gap:12px}.modal footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.fg3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rooms{display:flex;flex-wrap:wrap;gap:8px}.rooms label{border:1px solid var(--line);border-radius:7px;padding:5px 10px;display:flex;gap:6px;align-items:center;cursor:pointer;font-size:13px}
+/* phone */
+.phone{width:350px;max-width:100%;margin:0 auto;border:10px solid #11151c;border-radius:34px;background:#f5f6f8;overflow:hidden}
+.ph-top{background:#11151c;color:#fff;padding:14px 16px 16px}.ph-top b{font-size:17px}
+.ph-tabs{display:flex;background:#11151c;padding:0 12px 10px;gap:6px}.ph-tabs button{flex:1;border:0;border-radius:8px;padding:6px;background:#232a36;color:#cfd5df;font-size:12.5px;cursor:pointer}.ph-tabs button.on{background:#fff;color:#11151c;font-weight:600}
+.ph-body{padding:12px;max-height:470px;overflow:auto;display:grid;gap:10px}
+.ph-card{background:#fff;border-radius:12px;padding:12px;border:1px solid var(--line)}.ph-card .t{font-weight:650}.ph-card .btn{width:100%;justify-content:center;margin-top:10px}
+.mini{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:12px;text-align:center}
+.mini .w{color:var(--muted);font-size:11px}.mini button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 0;cursor:pointer}
+.mini button.off{background:var(--bad-soft);border-color:#f5c2c2;color:var(--bad);text-decoration:line-through}.mini button.work{background:var(--accent-soft);border-color:#c9d8fb;color:var(--accent);font-weight:700}.mini button:disabled{visibility:hidden}
+/* print sheet */
+.sheet-bg{position:fixed;inset:0;background:#e6e8ec;z-index:60;overflow:auto;padding:24px 16px}
+.sheet-bar{max-width:794px;margin:0 auto 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sheet{background:#fff;max-width:794px;margin:0 auto;padding:36px 42px;box-shadow:0 4px 20px rgba(0,0,0,.12);font-size:12.5px}
+.sheet h1{font-size:20px;margin:0}.sheet h4{margin:16px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#333;border-bottom:1.5px solid #222;padding-bottom:3px}
+.sheet table td,.sheet table th{padding:4px 6px;border-bottom:1px solid #ddd;font-size:12px}
+.sheet .sheet-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #222;padding-bottom:10px}
+.sheet .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.sheet .big{font-size:15px;font-weight:700}
+.box{display:inline-block;width:11px;height:11px;border:1.3px solid #333;margin-right:6px;vertical-align:-1px}
+.toast{position:fixed;bottom:20px;right:20px;background:#11151c;color:#fff;padding:10px 16px;border-radius:9px;font-size:13px;z-index:80;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;max-width:380px}
+.toast.show{opacity:1;transform:none}.toast.warn{background:#7a3e06}.empty{color:var(--muted);padding:12px 0;font-size:13px}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.two,.ev-grid,.cols2{grid-template-columns:1fr}}
+@media (max-width:760px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px}nav{flex-direction:row;margin:0;flex-wrap:wrap}.side-foot{display:none}.content{padding:16px}.top{padding:12px 16px;flex-wrap:wrap}.fg,.fg3{grid-template-columns:1fr}.cal .c{min-height:70px}.sheet .cols{grid-template-columns:1fr}}
+@media print{.app,.sheet-bar,.toast,.modal-bg{display:none!important}.sheet-bg{position:static;background:#fff;padding:0}.sheet{box-shadow:none;padding:0;max-width:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">Backoffice-Planer<small>Disposition Anlässe · Demo</small></div>
+    <nav id="nav">
+      <a href="#uebersicht" data-r="uebersicht"><span class="ico">◧</span>Übersicht</a>
+      <a href="#kalender" data-r="kalender"><span class="ico">▦</span>Kalender</a>
+      <a href="#anlaesse" data-r="anlaesse"><span class="ico">☰</span>Anlässe</a>
+      <a href="#team" data-r="team"><span class="ico">◉</span>Backoffice-Team</a>
+      <a href="#einstellungen" data-r="einstellungen"><span class="ico">⚙</span>Einstellungen</a>
+    </nav>
+    <div class="side-foot">Prototyp von <b>Fengrui Jiang</b><br>Alle Daten sind Beispieldaten.<br><br>Service-Personal läuft weiter über Coople – hier geht es um Backoffice &amp; Spülküche.</div>
+  </aside>
+  <main>
+    <div class="top"><h1 id="pageTitle">Übersicht</h1>
+      <div class="demo"><span class="pill-demo">DEMO</span><span>Änderungen bleiben nur in diesem Browser</span><button class="btn sm" onclick="resetDemo()">Zurücksetzen</button></div></div>
+    <div class="content" id="view"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<div id="layer"></div>
+
+<script>
+/* ===== Helpers ===== */
+const DAYS=['So','Mo','Di','Mi','Do','Fr','Sa'],DAYS_LONG=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const ROOMS=['Saal','Foyer','Seminarraum 1','Seminarraum 2','Terrasse'],STATUS=['Anfrage','Option','Bestätigt','Abgeschlossen'];
+const DRINKS=['Weisswein','Rotwein','Prosecco','Mineralwasser','Bier'];
+const TYPES={start:'Arbeitsbeginn',wc:'WC-Kontrolle',pause:'Pause',clean:'Reinigung',end:'Ende',info:'Hinweis'};
+const z=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());
+const addDays=(n,b)=>{const x=b?new Date(b):new Date();x.setHours(12,0,0,0);x.setDate(x.getDate()+n);return x};
+const D=n=>iso(addDays(n)),TODAY=D(0);
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)};
+const fmt=s=>{const x=parse(s);return DAYS[x.getDay()]+', '+z(x.getDate())+'.'+z(x.getMonth()+1)+'.'+x.getFullYear()};
+const fmtS=s=>{const x=parse(s);return z(x.getDate())+'.'+z(x.getMonth()+1)+'.'};
+const mins=t=>{const[a,b]=(t||'0:0').split(':').map(Number);return a*60+b};
+const fmtT=m=>{m=((m%1440)+1440)%1440;return z(Math.floor(m/60))+':'+z(m%60)};
+const range=(f,t)=>{let a=mins(f),b=mins(t);if(b<=a)b+=1440;return[a,b]};
+const dur=(f,t)=>{const[a,b]=range(f,t);return(b-a)/60};
+const hrs=n=>(Math.round(n*10)/10).toString().replace('.',',');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const until=s=>Math.round((parse(s)-parse(TODAY))/864e5);
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(w=>w[0]).join('');
+
+/* ===== Seed ===== */
+const GLASS={Weisswein:'Weissweinglas',Rotwein:'Rotweinglas',Prosecco:'Prosecco-Flûte',Mineralwasser:'Wasserglas',Bier:'Bierglas'};
+function defaultSettings(){return{wcEvery:60}}
+function seed(){
+  const S={set:defaultSettings(),seq:200,log:[]};
+  S.staff=[
+    {id:'p1',name:'Ahmet Yilmaz',phone:'079 412 33 10',unavail:[]},
+    {id:'p2',name:'Mira Novak',phone:'078 220 51 74',unavail:[D(12)]},
+    {id:'p3',name:'Tim Berger',phone:'076 381 09 62',unavail:[D(3)]},
+    {id:'p4',name:'Joana Silva',phone:'079 905 44 18',unavail:[]},
+    {id:'p5',name:'Luan Krasniqi',phone:'077 412 87 35',unavail:[]}];
+  let n=0;const bs=(staff,from,to,ok=false)=>({id:'b'+(++n),staff,from,to,ok});
+  const mk=(o)=>Object.assign({customer:'',contact:'',phone:'',rooms:['Saal'],status:'Bestätigt',coople:0,notes:'',service:[],drinks:{}},o);
+  S.events=[
+    mk({id:'e1',title:'Generalversammlung Wohngenossenschaft Aaretal',customer:'Wohngenossenschaft Aaretal',contact:'Beat Zimmermann',phone:'056 441 20 10',date:D(1),start:'18:30',end:'22:00',guests:320,rooms:['Saal','Foyer'],coople:8,
+      service:[{time:'18:00',text:'Türöffnung, Registrierung im Foyer'},{time:'18:30',text:'Gäste in den Saal – Beginn GV'},{time:'20:30',text:'Gäste kommen raus: Apéro riche im Foyer'},{time:'21:45',text:'Letzte Runde, Bar schliesst'},{time:'22:00',text:'Ende Anlass'}],
+      drinks:{Weisswein:true,Rotwein:true,Mineralwasser:true},bo:{start:'18:00',end:'23:30',bigClean:false},boStaff:[bs('p1','18:00','23:30',true),bs('p4','19:30','23:30')],notes:'Apéro-Gläser kommen ab 20:45 in grossen Mengen zurück – zweite Person ab 19:30.'}),
+    mk({id:'e2',title:'Workshop Startup-Netzwerk',customer:'Startup-Netzwerk Aargau',date:D(2),start:'13:00',end:'17:30',guests:30,rooms:['Seminarraum 2'],coople:1,
+      service:[{time:'13:00',text:'Beginn'},{time:'15:00',text:'Kaffeepause vor dem Raum'}],drinks:{Mineralwasser:true},bo:{start:'14:30',end:'18:00',bigClean:false},boStaff:[bs('p5','14:30','18:00',true)]}),
+    mk({id:'e3',title:'Weihnachtsessen Meier Bau AG',customer:'Meier Bau AG',contact:'Sandra Meier',date:D(3),start:'18:30',end:'00:30',guests:180,coople:9,
+      service:[{time:'18:30',text:'Apéro im Foyer'},{time:'19:30',text:'Gäste in den Saal – Dinner 3 Gänge'},{time:'22:00',text:'Dessert, danach Party/DJ'},{time:'00:30',text:'Ende'}],
+      drinks:{Prosecco:true,Weisswein:true,Rotwein:true,Mineralwasser:true},bo:{start:'18:00',end:'01:30',bigClean:true},boStaff:[bs('p2','18:00','01:30'),bs('p3','19:00','01:30')]}),
+    mk({id:'e4',title:'Fachtagung Digitale Verwaltung',customer:'Verband (Beispiel)',date:D(6),start:'08:30',end:'17:00',guests:140,rooms:['Saal','Foyer','Seminarraum 1'],coople:5,
+      service:[{time:'08:00',text:'Kaffee & Gipfeli im Foyer'},{time:'08:30',text:'Gäste in den Saal'},{time:'10:15',text:'Pause im Foyer'},{time:'12:15',text:'Stehlunch'},{time:'16:30',text:'Schlussapéro'}],
+      drinks:{Mineralwasser:true,Weisswein:true},bo:{start:'09:30',end:'18:00',bigClean:false},boStaff:[bs('p1','09:30','18:00'),bs()]}),
+    mk({id:'e5',title:'Winterkonzert Jugendorchester',customer:'Jugendorchester (Beispiel)',date:D(9),start:'19:30',end:'21:30',guests:400,rooms:['Saal','Foyer'],status:'Option',coople:6,
+      service:[{time:'19:00',text:'Türöffnung, Bar im Foyer'},{time:'20:15',text:'Pause – Pausenbar'},{time:'21:30',text:'Ende'}],drinks:{Weisswein:true},bo:{start:'19:00',end:'22:30',bigClean:false},boStaff:[bs(),bs(),bs()]}),
+    mk({id:'e6',title:'Firmenapéro Logistik Partner AG',customer:'Logistik Partner AG',date:D(12),start:'17:00',end:'20:00',guests:120,rooms:['Foyer','Terrasse'],coople:4,
+      service:[{time:'17:00',text:'Empfang mit Prosecco'},{time:'17:30',text:'Ansprache CEO'},{time:'18:00',text:'Flying Dinner'}],drinks:{Prosecco:true,Weisswein:true},bo:{start:'17:00',end:'21:00',bigClean:false},boStaff:[bs('p2','17:00','21:00')]}),
+    mk({id:'e7',title:'Jahresabschluss Turnverein',customer:'Turnverein (Beispiel)',date:D(16),start:'19:00',end:'00:00',guests:220,coople:7,
+      service:[{time:'19:00',text:'Apéro'},{time:'19:45',text:'Gäste in den Saal – Essen'},{time:'21:30',text:'Ehrungen'}],drinks:{Rotwein:true,Bier:true,Mineralwasser:true},bo:{start:'19:00',end:'01:00',bigClean:true},boStaff:[bs(),bs()]}),
+    mk({id:'e8',title:'Hochzeit Keller / Brunner',customer:'Privat',date:D(30),start:'16:00',end:'02:00',guests:120,rooms:['Saal','Terrasse'],status:'Anfrage',bo:{start:'16:00',end:'03:00',bigClean:true},boStaff:[]}),
+    mk({id:'e9',title:'Vernissage Kunstverein',customer:'Kunstverein (Beispiel)',date:D(-3),start:'18:00',end:'21:00',guests:80,rooms:['Foyer'],status:'Abgeschlossen',coople:2,
+      service:[{time:'18:00',text:'Apéro'}],drinks:{Weisswein:true},bo:{start:'18:00',end:'22:00',bigClean:false},boStaff:[bs('p4','18:00','22:00',true)]}),
+    mk({id:'e10',title:'Seminar Pflegefachtag',customer:'Spitex (Beispiel)',date:D(-8),start:'09:00',end:'16:00',guests:90,status:'Abgeschlossen',coople:3,
+      service:[{time:'12:00',text:'Lunch'}],drinks:{Mineralwasser:true},bo:{start:'11:30',end:'16:30',bigClean:false},boStaff:[bs('p1','11:30','16:30',true)]})
+  ];
+  S.events.forEach(e=>{e.boStaff.forEach(b=>{if(!b.from){b.from=e.bo.start;b.to=e.bo.end}});genPlan(e,S.set)});
+  const now=Date.now();
+  S.log=[{ts:now-36e5,text:'Ahmet Yilmaz hat Einsatz «Generalversammlung Wohngenossenschaft Aaretal» bestätigt'},
+    {ts:now-36e5*5,text:'Tim Berger hat sich für '+fmt(D(3))+' als nicht verfügbar gemeldet'},
+    {ts:now-36e5*22,text:'Getränke «Weihnachtsessen Meier Bau AG» angepasst: + Prosecco'},
+    {ts:now-36e5*30,text:'Monatsplan an das Backoffice-Team versendet'}];
+  return S;
+}
+function genPlan(e,set){
+  set=set||S.set;const b=e.bo;const[s,en]=range(b.start,b.end);const d=(en-s)/60;const it=[];
+  it.push({time:b.start,type:'start',text:'Arbeitsbeginn – Maschine einschalten, Gläser bereitstellen'});
+  const p=d>9?60:d>7?30:d>5.5?15:0;let ps=null;
+  if(p){ps=s+Math.round((en-s)/2/15)*15;it.push({time:fmtT(ps),type:'pause',text:`Pause (${p} Min.)`})}
+  const stop=en-(b.bigClean?75:45);
+  for(let m=s+set.wcEvery;m<=stop;m+=set.wcEvery){if(ps!==null&&m>ps-15&&m<ps+p+15)continue;it.push({time:fmtT(m),type:'wc',text:'WC-Kontrolle (Papier, Seife, Sauberkeit)'})}
+  (e.service||[]).forEach(x=>{if(/apéro|apero|pause|essen|dinner|lunch|bar/i.test(x.text)){const m=mins(x.time)+20;const rel=((m-s)%1440+1440)%1440;if(rel>0&&rel<en-s)it.push({time:fmtT(m),type:'info',text:'Gläser-Rücklauf erwartet ('+x.text.split(/[–,-]/)[0].trim()+')'})}});
+  it.push(b.bigClean?{time:fmtT(en-60),type:'clean',text:'Grossreinigung: Spülküche, Böden, Maschine entleeren & reinigen'}:{time:fmtT(en-30),type:'clean',text:'Schlussreinigung Spülbereich, Maschine entleeren'});
+  it.push({time:b.end,type:'end',text:'Ende – Gläser versorgt, Abmelden bei der Anlassleitung'});
+  b.plan=it;sortPlan(e);
+}
+function sortPlan(e){const s=mins(e.bo.start);const k=t=>((mins(t)-s)%1440+1440)%1440;e.bo.plan.sort((a,b)=>k(a.time)-k(b.time))}
+
+/* ===== State ===== */
+const KEY='bo-planer-demo-v3';let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.events||!S.set)S=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function log(t){S.log.unshift({ts:Date.now(),text:t});S.log=S.log.slice(0,40);save()}
+function nid(p){S.seq=(S.seq||200)+1;return p+S.seq}
+const ev=id=>S.events.find(e=>e.id===id),person=id=>S.staff.find(p=>p.id===id);
+function resetDemo(){confirmBox('Alle Änderungen verwerfen und die Beispieldaten neu laden?',()=>{S=seed();save();route();toast('Demo zurückgesetzt')})}
+
+/* ===== UI ===== */
+let tt;function toast(m,k){const t=$('#toast');t.textContent=m;t.className='toast show '+(k||'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',2800)}
+function closeLayer(){$('#layer').innerHTML=''}
+function modal(title,body,footer){$('#layer').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeLayer()"><div class="modal"><header>${title}<button class="btn ghost sm" onclick="closeLayer()">✕</button></header><div class="body">${body}</div>${footer?`<footer>${footer}</footer>`:''}</div></div>`}
+let _cf;function confirmBox(t,fn){_cf=fn;modal('Bitte bestätigen',`<div>${esc(t)}</div>`,`<button class="btn" onclick="closeLayer()">Abbrechen</button><button class="btn primary" onclick="closeLayer();_cf()">OK</button>`)}
+const badge=s=>`<span class="badge st-${s}">${s}</span>`;
+const rec=e=>Math.max(1,e.boStaff.length);
+const filled=e=>e.boStaff.filter(b=>b.staff).length;
+function staffNote(pid,date,eid){const p=person(pid);if(!p)return null;if(p.unavail.includes(date))return'hat sich abgemeldet';
+  for(const o of S.events){if(o.id!==eid&&o.date===date&&o.status!=='Abgeschlossen'&&o.boStaff.some(b=>b.staff===pid))return'bereits bei «'+o.title+'»'}return null}
+const glassList=e=>DRINKS.filter(d=>e.drinks[d]).map(d=>({dk:d,glass:GLASS[d]}));
+function staffChips(e){const r=rec(e),f=filled(e);return e.boStaff.filter(b=>b.staff).map(b=>{const n=staffNote(b.staff,e.date,e.id);return`<span class="ini ${n?'miss':b.ok?'ok':''}" title="${esc(person(b.staff).name)}${n?' – '+n:''}">${ini(person(b.staff).name)}${b.ok?' ✓':''}${n?' ⚠':''}</span>`}).join('')+(f<r&&e.status!=='Anfrage'?`<span class="ini miss">${r-f} offen</span>`:'')}
+const glassChips=e=>Object.keys(e.drinks).filter(d=>d==='Weisswein'||d==='Rotwein'||d==='Prosecco').map(d=>`<span class="glass"><span class="dot d-${d}"></span>${d}</span>`).join('');
+
+/* ===== Router ===== */
+const TITLES={uebersicht:'Übersicht',kalender:'Kalender',anlaesse:'Anlässe',team:'Backoffice-Team',einstellungen:'Einstellungen'};
+function route(){const h=location.hash.slice(1)||'uebersicht';const isEv=h.startsWith('anlass-')&&ev(h.slice(7));const base=isEv?'anlaesse':(TITLES[h]?h:'uebersicht');
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.dataset.r===base));closeLayer();
+  if(isEv){$('#pageTitle').textContent='Anlass';renderEvent(h.slice(7))}else{$('#pageTitle').textContent=TITLES[base];({uebersicht:renderOverview,kalender:renderCal,anlaesse:renderEvents,team:renderTeam,einstellungen:renderSettings})[base]()}}
+window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});
+const go=id=>location.hash='anlass-'+id;
+
+/* ===== Übersicht ===== */
+function renderOverview(){
+  const up=S.events.filter(e=>e.date>=TODAY&&e.status!=='Abgeschlossen').sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+  const ym=TODAY.slice(0,7),month=S.events.filter(e=>e.date.startsWith(ym)&&e.status!=='Anfrage');
+  const soon=up.filter(e=>until(e.date)<=30&&e.status!=='Anfrage');
+  const openSlots=soon.reduce((n,e)=>n+Math.max(0,rec(e)-filled(e)),0);
+  const unconf=soon.reduce((n,e)=>n+e.boStaff.filter(b=>b.staff&&!b.ok).length,0);
+  let h=0;month.forEach(e=>e.boStaff.forEach(b=>{if(b.staff)h+=dur(b.from,b.to)}));
+  const todo=[];soon.forEach(e=>{const r=rec(e),f=filled(e);
+    if(f<r)todo.push({ic:'🔴',e,t:f?`Backoffice: ${r-f} Platz/Plätze noch offen (${f}/${r} eingeteilt)`:'Backoffice: noch niemand eingeteilt'});
+    e.boStaff.forEach(b=>{if(b.staff&&person(b.staff).unavail.includes(e.date))todo.push({ic:'⚠️',e,t:`${person(b.staff).name} hat sich für diesen Tag abgemeldet – Ersatz nötig`})});
+    if(!Object.keys(e.drinks).length)todo.push({ic:'🍷',e,t:'Getränke noch nicht festgelegt – Gläser unklar'});
+    const u=e.boStaff.filter(b=>b.staff&&!b.ok).length;if(u&&until(e.date)<=7)todo.push({ic:'⏳',e,t:`${u} Einsatz/Einsätze noch nicht bestätigt`})});
+  $('#view').innerHTML=`
+  <div class="grid kpis">
+    <div class="card kpi"><div class="l">Anlässe im ${MONTHS[+ym.slice(5)-1]}</div><div class="n">${month.length}</div><div class="s">${month.reduce((n,e)=>n+e.guests,0)} Gäste total</div></div>
+    <div class="card kpi"><div class="l">Offene Backoffice-Plätze (30 Tage)</div><div class="n" style="color:${openSlots?'var(--warn)':'var(--ok)'}">${openSlots}</div><div class="s">${unconf} Einsätze unbestätigt</div></div>
+    <div class="card kpi"><div class="l">Backoffice-Stunden diesen Monat</div><div class="n">${hrs(h)}</div><div class="s">geplant, alle Mitarbeitenden</div></div>
+    <div class="card kpi"><div class="l">Nächster Anlass</div><div class="n" style="font-size:20px;padding-top:6px">${up[0]?(until(up[0].date)===0?'heute':until(up[0].date)===1?'morgen':'in '+until(up[0].date)+' Tagen'):'–'}</div><div class="s">${up[0]?esc(up[0].title):''}</div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="card"><h3>Nächste Anlässe<span class="sp"><button class="btn sm primary" onclick="editEvent()">+ Neuer Anlass</button></span></h3>
+      ${up.slice(0,7).map(e=>{const x=parse(e.date);return`<div class="ev-row" onclick="go('${e.id}')"><div class="datebox"><div class="w">${DAYS[x.getDay()]}</div><div class="d">${x.getDate()}</div><div class="w">${MONTHS[x.getMonth()].slice(0,3)}</div></div>
+        <div style="min-width:0;flex:1"><div class="t">${esc(e.title)}</div><div class="meta">Anlass ${e.start}–${e.end} · Backoffice ${e.bo.start}–${e.bo.end} · ${e.guests} Gäste${e.bo.bigClean?' · <b>Grossreinigung</b>':''}</div>
+        <div class="chips">${staffChips(e)}${glassChips(e)}</div></div>${badge(e.status)}</div>`}).join('')||'<div class="empty">Keine Anlässe.</div>'}</div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h3>Handlungsbedarf <span class="sp small muted">${todo.length} Punkte</span></h3>${todo.length?`<ul class="todo">${todo.slice(0,8).map(t=>`<li><span class="ic">${t.ic}</span><div><a href="#anlass-${t.e.id}"><b>${esc(t.e.title)}</b></a> <span class="muted small">${fmtS(t.e.date)}</span><div>${esc(t.t)}</div></div></li>`).join('')}</ul>`:'<div class="empty">Alles erledigt 🎉</div>'}</div>
+      <div class="card"><h3>Letzte Änderungen</h3><ul class="log">${S.log.slice(0,6).map(l=>`<li><time>${rel(l.ts)}</time><span>${esc(l.text)}</span></li>`).join('')}</ul></div>
+    </div></div>`;
+}
+function rel(ts){const m=Math.round((Date.now()-ts)/6e4);if(m<1)return'gerade eben';if(m<60)return'vor '+m+' Min.';const h=Math.round(m/60);return h<24?'vor '+h+' Std.':'vor '+Math.round(h/24)+' Tg.'}
+
+/* ===== Kalender ===== */
+let calOff=0;
+function renderCal(){
+  const t=new Date();const first=new Date(t.getFullYear(),t.getMonth()+calOff,1,12);const mon=addDays(-((first.getDay()+6)%7),first);
+  const cells=[];for(let i=0;i<42;i++){const d=addDays(i,mon);if(i>=35&&d.getMonth()!==first.getMonth())break;cells.push(d)}
+  $('#view').innerHTML=`<div class="toolbar"><button class="btn" onclick="calOff--;renderCal()">←</button><button class="btn" onclick="calOff=0;renderCal()">Heute</button><button class="btn" onclick="calOff++;renderCal()">→</button>
+    <b style="font-size:16px;margin-left:6px">${MONTHS[first.getMonth()]} ${first.getFullYear()}</b><span class="spacer"></span>
+    <span class="small muted">Kürzel = eingeteiltes Backoffice · ✓ bestätigt · rot = Lücke</span><button class="btn primary" onclick="editEvent()">+ Neuer Anlass</button></div>
+  <div class="cal">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<div class="h">${d}</div>`).join('')}
+  ${cells.map(d=>{const ds=iso(d);const es=S.events.filter(e=>e.date===ds).sort((a,b)=>a.start.localeCompare(b.start));
+    return`<div class="c ${d.getMonth()!==first.getMonth()?'out':''} ${ds===TODAY?'today':''}"><span class="num">${d.getDate()}</span>
+    ${es.map(e=>`<button class="e ${e.status}" onclick="go('${e.id}')"><span class="tt">${esc(e.title)}</span><span class="muted">BO ${e.bo.start}–${e.bo.end}</span><div class="chips">${staffChips(e)}</div></button>`).join('')}</div>`}).join('')}</div>`;
+}
+
+/* ===== Anlässe Liste ===== */
+let filt='Alle',q='';
+function renderEvents(){
+  $('#view').innerHTML=`<div class="toolbar"><input type="search" placeholder="Suchen…" value="${esc(q)}" oninput="q=this.value;fillEv()">
+    ${['Alle',...STATUS].map(s=>`<button class="chip ${filt===s?'on':''}" onclick="filt='${s}';renderEvents()">${s}</button>`).join('')}<span class="spacer"></span><button class="btn primary" onclick="editEvent()">+ Neuer Anlass</button></div>
+  <div class="card" style="padding:4px 8px"><table><thead><tr><th>Datum</th><th>Anlass</th><th>Gäste</th><th>Backoffice</th><th>Team</th><th>Gläser</th><th>Status</th></tr></thead><tbody id="evb"></tbody></table></div>`;fillEv()}
+function fillEv(){const k=q.trim().toLowerCase();
+  const l=S.events.filter(e=>(filt==='Alle'||e.status===filt)&&(!k||(e.title+' '+e.customer).toLowerCase().includes(k))).sort((a,b)=>{const pa=a.date<TODAY,pb=b.date<TODAY;if(pa!==pb)return pa?1:-1;return pa?b.date.localeCompare(a.date):a.date.localeCompare(b.date)});
+  $('#evb').innerHTML=l.map(e=>`<tr class="click" onclick="go('${e.id}')"><td style="white-space:nowrap">${fmt(e.date)}<div class="small muted">${e.start}–${e.end}</div></td><td><b>${esc(e.title)}</b><div class="small muted">${esc(e.customer)}</div></td><td>${e.guests}</td>
+    <td class="small">${e.bo.start}–${e.bo.end}${e.bo.bigClean?'<div class="muted">+ Grossreinigung</div>':''}</td><td><div class="chips">${staffChips(e)}</div></td><td><div class="chips">${glassChips(e)}</div></td><td>${badge(e.status)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">Keine Anlässe.</td></tr>'}
+
+/* ===== Anlass Detail ===== */
+function renderEvent(id){
+  const e=ev(id),x=parse(e.date),dl=until(e.date),r=rec(e),f=filled(e);
+  const bothWine=e.drinks.Weisswein&&e.drinks.Rotwein;
+  $('#view').innerHTML=`
+  <div class="head"><div><a href="#kalender" class="small">← Kalender</a><h2>${esc(e.title)}</h2>
+    <div class="muted">${DAYS_LONG[x.getDay()]}, ${fmt(e.date).slice(4)} · Anlass ${e.start}–${e.end} · ${e.guests} Gäste · ${esc(e.rooms.join(', '))}${dl>=0?` · <b style="color:var(--ink)">${dl===0?'heute':dl===1?'morgen':'in '+dl+' Tagen'}</b>`:''}</div></div>
+    <div class="acts"><select style="width:auto" onchange="setF('${id}','status',this.value)">${STATUS.map(s=>`<option ${s===e.status?'selected':''}>${s}</option>`).join('')}</select>
+      <button class="btn" onclick="editEvent('${id}')">Bearbeiten</button><button class="btn primary" onclick="printKitchen('${id}')">🖨 Küchenaushang</button>
+      <button class="btn" onclick="dupEvent('${id}')">Duplizieren</button><button class="btn danger" onclick="delEvent('${id}')">Löschen</button></div></div>
+  ${f<r&&e.status!=='Abgeschlossen'?`<div class="alert warn"><b>Backoffice noch nicht komplett:</b> ${f} von ${r} Plätzen besetzt.</div>`:''}
+  ${e.boStaff.filter(b=>b.staff&&person(b.staff).unavail.includes(e.date)).map(b=>`<div class="alert bad"><b>${esc(person(b.staff).name)}</b> hat sich für diesen Tag als nicht verfügbar gemeldet – bitte Ersatz einteilen.</div>`).join('')}
+  <div class="grid ev-grid">
+    <div class="card"><h3>Backoffice-Einteilung <span class="sp small muted">${f}/${r} · ${hrs(e.boStaff.filter(b=>b.staff).reduce((n,b)=>n+dur(b.from,b.to),0))} Std.</span></h3>
+      ${e.boStaff.length?`<table><thead><tr><th>Mitarbeiter/in</th><th>Von</th><th>Bis</th><th>Status</th><th></th></tr></thead><tbody>${e.boStaff.map(b=>{const n=b.staff&&staffNote(b.staff,e.date,e.id);return`<tr>
+        <td style="min-width:160px"><select onchange="assign('${id}','${b.id}',this.value)"><option value="">– offen –</option>${S.staff.map(p=>{const nn=staffNote(p.id,e.date,e.id);return`<option value="${p.id}" ${b.staff===p.id?'selected':''}>${esc(p.name)}${nn?' ('+nn.replace(/«.*»/,'anderer Anlass')+')':''}</option>`}).join('')}</select></td>
+        <td style="width:100px"><input type="time" value="${b.from}" onchange="setB('${id}','${b.id}','from',this.value)"></td><td style="width:100px"><input type="time" value="${b.to}" onchange="setB('${id}','${b.id}','to',this.value)"></td>
+        <td>${!b.staff?'<span class="clash" style="color:var(--warn)">offen</span>':n?`<span class="clash">⚠ ${esc(n)}</span>`:b.ok?'<span class="conf">✓ bestätigt</span>':'<span class="pend">wartet</span>'}</td>
+        <td><button class="btn ghost sm" onclick="delB('${id}','${b.id}')">✕</button></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Noch niemand eingeteilt.</div>'}
+      <div class="addrow"><button class="btn sm" onclick="addB('${id}')">+ Person einteilen</button></div></div>
+    <div class="card"><h3>Eckdaten</h3><dl class="kv"><dt>Kunde</dt><dd>${esc(e.customer)||'–'}</dd><dt>Kontakt</dt><dd>${esc(e.contact)||'–'} ${esc(e.phone)}</dd>
+      <dt>Räume</dt><dd>${esc(e.rooms.join(', '))}</dd><dt>Gäste</dt><dd>${e.guests}</dd>
+      <dt>Service</dt><dd><input type="number" min="0" value="${e.coople}" style="width:70px;padding:3px 6px" onchange="setF('${id}','coople',+this.value)"> Personen über Coople <span class="small muted">(nur Info)</span></dd></dl>
+      <h3 style="margin-top:14px">Notizen fürs Backoffice</h3><textarea onchange="setF('${id}','notes',this.value)" placeholder="z.B. Besonderheiten, Zugang, Ansprechperson…">${esc(e.notes)}</textarea></div>
+
+    <div class="card"><h3>Backoffice-Tagesplan<span class="sp"><button class="btn sm" onclick="regen('${id}')">↻ automatisch erstellen</button></span></h3>
+      <div class="fg3" style="margin-bottom:10px"><div class="field"><label>Beginn</label><input type="time" value="${e.bo.start}" onchange="setBo('${id}','start',this.value)"></div>
+        <div class="field"><label>Ende</label><input type="time" value="${e.bo.end}" onchange="setBo('${id}','end',this.value)"></div>
+        <div class="field"><label>Grossreinigung</label><label style="display:flex;gap:6px;align-items:center;padding-top:6px;font-size:13px;color:var(--ink)"><input type="checkbox" ${e.bo.bigClean?'checked':''} onchange="setBo('${id}','bigClean',this.checked)"> ja, am Schluss</label></div></div>
+      ${e.bo.plan.map((p,i)=>`<div class="step"><b>${p.time}</b><span class="tag t-${p.type}">${TYPES[p.type]}</span><span>${esc(p.text)}</span><button class="x" onclick="delP('${id}',${i})">✕</button></div>`).join('')}
+      <form class="addrow" onsubmit="event.preventDefault();addP('${id}',this)"><input type="time" name="t" style="width:105px" required><select name="y" style="width:130px">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><input type="text" name="x" placeholder="Text…" required><button class="btn">+</button></form>
+      <div class="small muted" style="margin-top:8px">Automatik: WC-Kontrolle alle ${S.set.wcEvery} Min., Pause nach Arbeitsgesetz, Gläser-Rücklauf nach Apéro/Essen aus dem Service-Ablauf.</div></div>
+    <div class="card"><h3>Ablauf Anlass <span class="sp small muted">für Service &amp; Küche</span></h3>
+      ${e.service.sort((a,b)=>a.time.localeCompare(b.time)).map((s,i)=>`<div class="step"><b>${s.time}</b><span>${esc(s.text)}</span><button class="x" onclick="delS('${id}',${i})">✕</button></div>`).join('')||'<div class="empty">Noch kein Ablauf.</div>'}
+      <form class="addrow" onsubmit="event.preventDefault();addS('${id}',this)"><input type="time" name="t" style="width:105px" required><input type="text" name="x" placeholder="z.B. Gäste kommen raus zum Apéro" required><button class="btn">+</button></form></div>
+
+    <div class="card wide"><h3>Getränke &amp; Gläser <span class="sp small muted">laut Kundenwunsch – bestimmt, welche Gläser gespült werden</span></h3>
+      <div class="drink-toggle">${DRINKS.map(d=>`<label class="${e.drinks[d]?'on':''}"><input type="checkbox" ${e.drinks[d]?'checked':''} onchange="toggleDrink('${id}','${d}')"><span class="dot d-${d}"></span>${d}</label>`).join('')}</div>
+      ${bothWine?`<div class="alert info"><b>Weiss- und Rotwein:</b> zwei verschiedene Glastypen – getrennt spülen und einsortieren.</div>`:''}
+      ${glassList(e).length?`<div class="crate-total">${glassList(e).map(g=>`<div><span class="small muted">${g.dk}</span><b style="font-size:15px"><span class="dot d-${g.dk}"></span> ${esc(g.glass)}</b></div>`).join('')}</div>`:'<div class="empty">Noch keine Getränke gewählt.</div>'}</div>
+  </div>`;
+}
+function setF(id,f,v){const e=ev(id);e[f]=v;log(f==='status'?`Status «${e.title}» → ${v}`:`«${e.title}» aktualisiert`);route();toast('Gespeichert')}
+function assign(id,bid,pid){const e=ev(id),b=e.boStaff.find(x=>x.id===bid);b.staff=pid||null;b.ok=false;const n=pid&&staffNote(pid,e.date,e.id);
+  log(pid?`${person(pid).name} eingeteilt: «${e.title}» ${b.from}–${b.to}`:`Einteilung entfernt («${e.title}»)`);route();
+  if(n)toast(`Achtung: ${person(pid).name} ${n}`,'warn');else if(pid)toast(`${person(pid).name} eingeteilt – erscheint in ihrem/seinem Monatsplan`)}
+function setB(id,bid,k,v){const b=ev(id).boStaff.find(x=>x.id===bid);b[k]=v;b.ok=false;save();route()}
+function addB(id){const e=ev(id);e.boStaff.push({id:nid('b'),staff:null,from:e.bo.start,to:e.bo.end,ok:false});save();route()}
+function delB(id,bid){const e=ev(id);e.boStaff=e.boStaff.filter(b=>b.id!==bid);save();route()}
+function setBo(id,k,v){const e=ev(id);e.bo[k]=v;genPlan(e);log(`Backoffice-Tagesplan «${e.title}» angepasst`);route();toast('Tagesplan neu berechnet')}
+function regen(id){genPlan(ev(id));save();route();toast('Tagesplan automatisch erstellt')}
+function addP(id,f){const e=ev(id);e.bo.plan.push({time:f.t.value,type:f.y.value,text:f.x.value.trim()});sortPlan(e);save();route()}
+function delP(id,i){ev(id).bo.plan.splice(i,1);save();route()}
+function addS(id,f){ev(id).service.push({time:f.t.value,text:f.x.value.trim()});save();route()}
+function delS(id,i){ev(id).service.splice(i,1);save();route()}
+function toggleDrink(id,d){const e=ev(id);if(e.drinks[d])delete e.drinks[d];else e.drinks[d]=true;
+  log(`Getränke «${e.title}»: ${d} ${e.drinks[d]?'hinzugefügt':'entfernt'}`);route()}
+function dupEvent(id){const e=JSON.parse(JSON.stringify(ev(id)));e.id=nid('e');e.title+=' (Kopie)';e.status='Anfrage';e.boStaff.forEach(b=>{b.id=nid('b');b.staff=null;b.ok=false});S.events.push(e);log(`Anlass dupliziert: «${e.title}»`);go(e.id);toast('Kopie erstellt – Datum anpassen')}
+function delEvent(id){const e=ev(id);confirmBox(`«${e.title}» wirklich löschen?`,()=>{S.events=S.events.filter(x=>x.id!==id);log(`Anlass gelöscht: «${e.title}»`);location.hash='anlaesse'})}
+
+/* ===== Erfassen ===== */
+function editEvent(id){
+  const e=id?ev(id):{title:'',customer:'',contact:'',phone:'',date:D(7),start:'18:00',end:'22:00',guests:100,rooms:['Saal'],status:'Anfrage'};
+  modal(id?'Anlass bearbeiten':'Neuer Anlass',`<form id="evf" class="grid" style="gap:12px" onsubmit="event.preventDefault();saveEv('${id||''}')">
+    <div class="field"><label>Bezeichnung *</label><input type="text" name="title" value="${esc(e.title)}" required placeholder="z.B. Firmenjubiläum Muster AG"></div>
+    <div class="fg3"><div class="field"><label>Kunde</label><input type="text" name="customer" value="${esc(e.customer)}"></div><div class="field"><label>Kontaktperson</label><input type="text" name="contact" value="${esc(e.contact)}"></div><div class="field"><label>Telefon</label><input type="tel" name="phone" value="${esc(e.phone)}"></div>
+      <div class="field"><label>Datum *</label><input type="date" name="date" value="${e.date}" required></div><div class="field"><label>Beginn Anlass *</label><input type="time" name="start" value="${e.start}" required></div><div class="field"><label>Ende Anlass *</label><input type="time" name="end" value="${e.end}" required></div>
+      <div class="field"><label>Gäste</label><input type="number" name="guests" value="${e.guests}" min="1"></div><div class="field"><label>Status</label><select name="status">${STATUS.map(s=>`<option ${s===e.status?'selected':''}>${s}</option>`).join('')}</select></div></div>
+    <div class="field"><label>Räume</label><div class="rooms">${ROOMS.map(r=>`<label><input type="checkbox" name="rooms" value="${r}" ${e.rooms.includes(r)?'checked':''}>${r}</label>`).join('')}</div></div>
+    ${id?'':'<div class="small muted">Backoffice-Zeiten (Beginn −30 Min., Ende +60 Min.) und Tagesplan werden automatisch vorgeschlagen und lassen sich danach anpassen.</div>'}</form>`,
+  `<button class="btn" onclick="closeLayer()">Abbrechen</button><button class="btn primary" onclick="document.getElementById('evf').requestSubmit()">Speichern</button>`)}
+function saveEv(id){const f=$('#evf');const d={title:f.title.value.trim(),customer:f.customer.value.trim(),contact:f.contact.value.trim(),phone:f.phone.value.trim(),date:f.date.value,start:f.start.value,end:f.end.value,guests:+f.guests.value||1,status:f.status.value,rooms:[...f.querySelectorAll('[name=rooms]:checked')].map(c=>c.value)};
+  if(!d.rooms.length)d.rooms=['Saal'];
+  if(id){Object.assign(ev(id),d);log(`Anlass bearbeitet: «${d.title}»`);closeLayer();route();toast('Gespeichert')}
+  else{const e=Object.assign({id:nid('e'),coople:0,notes:'',service:[{time:d.start,text:'Beginn Anlass'},{time:d.end,text:'Ende Anlass'}],drinks:{Weisswein:true},bo:{start:fmtT(mins(d.start)-30),end:fmtT(mins(d.end)+60),bigClean:false},boStaff:[]},d);
+    genPlan(e);for(let i=0;i<1;i++)e.boStaff.push({id:nid('b'),staff:null,from:e.bo.start,to:e.bo.end,ok:false});
+    S.events.push(e);log(`Neuer Anlass erfasst: «${e.title}»`);closeLayer();go(e.id);toast('Anlass erstellt – Backoffice-Plan vorgeschlagen')}}
+
+/* ===== Küchenaushang ===== */
+function printBar(){return`<div class="sheet-bar"><button class="btn" onclick="closeLayer()">← Zurück</button><button class="btn primary" onclick="try{window.print()}catch(e){}">Drucken / als PDF</button><span class="small muted">Falls «Drucken» hier gesperrt ist: Seite direkt im Browser öffnen und Cmd/Strg + P.</span></div>`}
+function printKitchen(id){
+  const e=ev(id),team=e.boStaff.filter(b=>b.staff);
+  $('#layer').innerHTML=`<div class="sheet-bg">${printBar()}<div class="sheet">
+    <div class="sheet-head"><div><div class="small" style="letter-spacing:.08em;text-transform:uppercase;color:#666">Aushang Spülküche</div><h1>${esc(e.title)}</h1></div>
+      <div style="text-align:right"><b class="big">${fmt(e.date)}</b><br>Anlass ${e.start}–${e.end} · ${e.guests} Gäste</div></div>
+    <div style="margin-top:10px"><b>Backoffice:</b> ${team.map(b=>`${esc(person(b.staff).name)} (${b.from}–${b.to})`).join(' · ')||'<i>noch offen</i>'}${e.bo.bigClean?' · <b>GROSSREINIGUNG</b>':''}</div>
+    <div class="cols"><div><h4>Tagesplan Backoffice</h4><table><tbody>${e.bo.plan.map(p=>`<tr><td width="18%"><b>${p.time}</b></td><td><span class="box"></span>${esc(p.text)}</td></tr>`).join('')}</tbody></table></div>
+      <div><h4>Ablauf Anlass</h4><table><tbody>${e.service.map(s=>`<tr><td width="18%"><b>${s.time}</b></td><td>${esc(s.text)}</td></tr>`).join('')||'<tr><td>–</td></tr>'}</tbody></table>
+      <h4>Getränke &amp; Gläser</h4><table><tbody>${glassList(e).map(g=>`<tr><td><b>${g.dk}</b></td><td class="big">→ ${esc(g.glass)}</td></tr>`).join('')||'<tr><td>–</td></tr>'}</tbody></table>
+      ${e.drinks.Weisswein&&e.drinks.Rotwein?'<div style="margin-top:6px"><b>⚠ Weiss- und Rotweingläser getrennt spülen &amp; einsortieren</b></div>':''}</div></div>
+    ${e.notes?`<h4>Hinweise</h4><div style="white-space:pre-wrap">${esc(e.notes)}</div>`:''}
+    <div style="margin-top:22px;font-size:10.5px;color:#888">Stand: ${new Date().toLocaleString('de-CH')} · automatisch aus dem Backoffice-Planer erstellt – ersetzt Tagesplan, Ablauf und Getränkeliste</div></div></div>`;
+}
+
+/* ===== Team ===== */
+function shiftsOf(pid,ym){const l=[];S.events.forEach(e=>{if(e.status==='Anfrage')return;e.boStaff.forEach(b=>{if(b.staff===pid&&(!ym||e.date.startsWith(ym)))l.push({e,b})})});return l.sort((a,b)=>(a.e.date+a.b.from).localeCompare(b.e.date+b.b.from))}
+function renderTeam(){const ym=TODAY.slice(0,7);
+  $('#view').innerHTML=`<div class="toolbar"><span class="muted">Statt ausgedrucktem Monatsblatt: Jede Person sieht ihre Einsätze auf dem Handy, bestätigt sie und meldet Abwesenheiten.</span><span class="spacer"></span>
+    <button class="btn" onclick="toast('In der echten Version: Monatsplan per E-Mail/SMS an alle')">✉ Monatsplan an alle senden</button><button class="btn primary" onclick="addPerson()">+ Person</button></div>
+  <div class="grid staff-grid">${S.staff.map(p=>{const m=shiftsOf(p.id,ym),h=m.reduce((n,x)=>n+dur(x.b.from,x.b.to),0),unc=shiftsOf(p.id).filter(x=>x.e.date>=TODAY&&!x.b.ok).length;
+    return`<div class="card"><div class="person"><div class="avatar">${ini(p.name)}</div><div><b>${esc(p.name)}</b><div class="small muted">Backoffice · ${esc(p.phone)}</div></div></div>
+    <div class="stats"><div><b>${m.length}</b><span>Einsätze ${MONTHS[+ym.slice(5)-1]}</span></div><div><b>${hrs(h)}</b><span>Stunden</span></div><div><b style="color:${unc?'var(--warn)':'inherit'}">${unc}</b><span>unbestätigt</span></div></div>
+    ${p.unavail.filter(d=>d>=TODAY).length?`<div class="small" style="margin-bottom:10px;color:var(--bad)">Abwesend: ${p.unavail.filter(d=>d>=TODAY).sort().map(fmtS).join(', ')}</div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="phone('${p.id}')">📱 Handy-Ansicht</button><button class="btn sm" onclick="printMonth('${p.id}')">🖨 Monatsplan</button></div></div>`}).join('')}</div>`}
+function addPerson(){modal('Person hinzufügen',`<form id="pf" class="fg" onsubmit="event.preventDefault();savePerson()"><div class="field"><label>Name *</label><input type="text" name="n" required></div><div class="field"><label>Telefon</label><input type="tel" name="p"></div></form>`,
+  `<button class="btn" onclick="closeLayer()">Abbrechen</button><button class="btn primary" onclick="document.getElementById('pf').requestSubmit()">Speichern</button>`)}
+function savePerson(){const f=$('#pf');S.staff.push({id:nid('p'),name:f.n.value.trim(),phone:f.p.value.trim(),unavail:[]});log('Neue Person im Backoffice-Team: '+f.n.value.trim());closeLayer();renderTeam()}
+let phTab='plan';
+function phone(pid){const p=person(pid);const up=shiftsOf(pid).filter(x=>x.e.date>=TODAY&&x.e.status!=='Abgeschlossen');
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),dim=new Date(y,m+2,0).getDate();
+  const nm=new Date(y,m+1,1,12),lead=(nm.getDay()+6)%7;const work=new Set(up.map(x=>x.e.date));
+  let cal='';for(let i=0;i<lead;i++)cal+='<button disabled></button>';for(let d=1;d<=dim;d++){const ds=iso(new Date(y,m+1,d,12));cal+=`<button class="${p.unavail.includes(ds)?'off':work.has(ds)?'work':''}" onclick="toggleOff('${pid}','${ds}')">${d}</button>`}
+  modal('Vorschau: Handy-Ansicht Mitarbeitende',`<div class="phone"><div class="ph-top"><div class="small" style="opacity:.7">Backoffice</div><b>Hallo ${esc(p.name.split(' ')[0])}</b></div>
+   <div class="ph-tabs"><button class="${phTab==='plan'?'on':''}" onclick="phTab='plan';phone('${pid}')">Meine Einsätze</button><button class="${phTab==='off'?'on':''}" onclick="phTab='off';phone('${pid}')">Abwesenheiten</button></div>
+   <div class="ph-body">${phTab==='plan'?(up.map(({e,b})=>`<div class="ph-card"><div class="small muted">${fmt(e.date)}</div><div class="t">${esc(e.title)}</div>
+     <div class="small" style="margin-top:4px"><b>${b.from}–${b.to}</b> · ${hrs(dur(b.from,b.to))} Std. · ${e.guests} Gäste${e.bo.bigClean?' · <b>Grossreinigung</b>':''}</div>
+     <div class="chips" style="margin-top:6px">${glassChips(e)}</div>
+     <details style="margin-top:8px;font-size:12.5px"><summary style="cursor:pointer;color:var(--accent)">Tagesplan ansehen</summary>${e.bo.plan.map(x=>`<div style="padding:3px 0"><b>${x.time}</b> ${esc(x.text)}</div>`).join('')}</details>
+     ${b.ok?`<button class="btn" style="color:var(--ok)" onclick="conf('${e.id}','${b.id}','${pid}',false)">✓ Bestätigt</button>`:`<button class="btn primary" onclick="conf('${e.id}','${b.id}','${pid}',true)">Einsatz bestätigen</button>`}</div>`).join('')||'<div class="ph-card muted">Keine kommenden Einsätze.</div>')
+     :`<div class="ph-card"><div class="t">${MONTHS[nm.getMonth()]} ${nm.getFullYear()}</div><div class="small muted" style="margin:4px 0 10px">Tippe auf Tage, an denen du <b>nicht</b> arbeiten kannst. Blau = du bist eingeteilt.</div>
+       <div class="mini">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<div class="w">${d}</div>`).join('')}${cal}</div></div>`}</div></div>
+   <div class="small muted" style="text-align:center">Bestätigungen und Abwesenheiten erscheinen sofort bei der Anlassleitung.</div>`)}
+function conf(eid,bid,pid,ok){const e=ev(eid);e.boStaff.find(b=>b.id===bid).ok=ok;if(ok)log(`${person(pid).name} hat Einsatz «${e.title}» bestätigt`);else save();phone(pid);toast(ok?'Bestätigung an Anlassleitung gesendet':'Bestätigung zurückgenommen')}
+function toggleOff(pid,ds){const p=person(pid),i=p.unavail.indexOf(ds);if(i>=0)p.unavail.splice(i,1);else{p.unavail.push(ds);log(`${p.name} hat sich für ${fmt(ds)} als nicht verfügbar gemeldet`)}save();phone(pid)}
+function printMonth(pid){const p=person(pid),now=new Date(),ym=TODAY.slice(0,7),l=shiftsOf(pid,ym);
+  $('#layer').innerHTML=`<div class="sheet-bg">${printBar()}<div class="sheet"><div class="sheet-head"><div><div class="small" style="letter-spacing:.08em;text-transform:uppercase;color:#666">Monatsplan Backoffice</div><h1>${esc(p.name)}</h1></div><div class="big">${MONTHS[now.getMonth()]} ${now.getFullYear()}</div></div>
+   <h4>Einsätze</h4><table><thead><tr><th>Datum</th><th>Anlass</th><th>Zeit</th><th>Std.</th><th>Hinweis</th></tr></thead><tbody>${l.map(({e,b})=>`<tr><td><b>${fmt(e.date)}</b></td><td>${esc(e.title)}</td><td>${b.from}–${b.to}</td><td>${hrs(dur(b.from,b.to))}</td><td>${e.bo.bigClean?'Grossreinigung':''}</td></tr>`).join('')||'<tr><td colspan="5">Keine Einsätze</td></tr>'}</tbody></table>
+   <div style="margin-top:10px"><b>Total: ${hrs(l.reduce((n,x)=>n+dur(x.b.from,x.b.to),0))} Std.</b></div>
+   <div style="margin-top:22px;font-size:10.5px;color:#888">Stand: ${new Date().toLocaleString('de-CH')} · Änderungen sind immer aktuell in der Handy-Ansicht</div></div></div>`}
+
+/* ===== Einstellungen ===== */
+function renderSettings(){
+  $('#view').innerHTML=`<div class="card" style="max-width:520px"><h3>Tagesplan Backoffice</h3><div class="grid" style="gap:12px">
+    <div class="field"><label>WC-Kontrolle alle … Minuten</label><input type="number" min="15" step="15" value="${S.set.wcEvery}" onchange="setSet('wcEvery',this.value)"></div>
+    <div class="small muted">Wird in jedem automatisch erstellten Tagesplan verwendet. Pausen kommen automatisch nach Arbeitsgesetz dazu (ab 5½ Std. 15 Min., ab 7 Std. 30 Min., ab 9 Std. 60 Min.).</div>
+    <button class="btn" onclick="S.events.forEach(e=>genPlan(e));save();toast('Alle Tagespläne neu berechnet')">↻ Alle Tagespläne neu berechnen</button></div></div>`}
+function setSet(k,v){S.set[k]=Math.max(1,+v||1);save();toast('Gespeichert')}
+
+route();
+</script>
+</body>
+</html>
